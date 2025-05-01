@@ -15,7 +15,7 @@ app.use(express.json());
 // Cấu hình MinIO client
 const s3Client = new S3Client({
   region: "us-east-1",
-  endpoint: `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}`,
+  endpoint: process.env.MINIO_ENDPOINT,
   credentials: {
     accessKeyId: process.env.MINIO_ACCESS_KEY,
     secretAccessKey: process.env.MINIO_SECRET_KEY,
@@ -23,31 +23,30 @@ const s3Client = new S3Client({
   forcePathStyle: true,
 });
 
-// Cấu hình Multer để lưu file tạm thời
+// Cấu hình Multer
 const upload = multer({ dest: "uploads/" });
 
 // API upload ảnh
 app.post("/upload", upload.single("image"), async (req, res) => {
   try {
     const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
     const fileName = `images/${Date.now()}_${file.originalname}`;
 
-    // Upload file lên MinIO
     const command = new PutObjectCommand({
       Bucket: process.env.MINIO_BUCKET,
       Key: fileName,
       Body: fs.createReadStream(file.path),
       ContentType: file.mimetype,
+      ACL: "public-read", // Cho phép truy cập công khai
     });
 
     await s3Client.send(command);
-
-    // Xóa file tạm
     fs.unlinkSync(file.path);
 
-    // Tạo public URL
-    const fileUrl = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET}/${fileName}`;
-
+    const fileUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET}/${fileName}`;
     res.json({ fileUrl });
   } catch (error) {
     console.error(error);
@@ -55,12 +54,13 @@ app.post("/upload", upload.single("image"), async (req, res) => {
   }
 });
 
-// Tạo thư mục uploads nếu chưa có
-const uploadDir = path.join(__dirname, "uploads");
+// Tạo thư mục uploads
+const uploadDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server chạy tại http://localhost:${process.env.PORT}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server chạy tại http://localhost:${PORT}`);
 });
