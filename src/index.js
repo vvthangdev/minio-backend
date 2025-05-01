@@ -33,7 +33,9 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     if (!file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    const fileName = `images/${Date.now()}_${file.originalname}`;
+    // Thay khoảng trắng bằng dấu gạch dưới
+    const safeFileName = file.originalname.replace(/\s+/g, "_");
+    const fileName = `images/${Date.now()}_${safeFileName}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.MINIO_BUCKET,
@@ -46,7 +48,8 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     await s3Client.send(command);
     fs.unlinkSync(file.path);
 
-    const fileUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET}/${fileName}`;
+    // Trả về URL công khai
+    const fileUrl = `http://128.199.246.55:9000/${process.env.MINIO_BUCKET}/${fileName}`;
     res.json({ fileUrl });
   } catch (error) {
     console.error(error);
@@ -55,7 +58,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 });
 
 // Tạo thư mục uploads
-const uploadDir = path.join(__dirname, "../uploads");
+const uploadDir = path.join(__dirname, "../Uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
