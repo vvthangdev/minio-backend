@@ -66,4 +66,5 @@ if (!fs.existsSync(uploadDir)) {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server chạy tại http://localhost:${PORT}`);
+  console.log(`Minio endpoint: ${process.env.MINIO_ENDPOINT}`);
 });
