@@ -35,7 +35,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     }
     // Thay khoảng trắng bằng dấu gạch dưới
     const safeFileName = file.originalname.replace(/\s+/g, "_");
-    const fileName = `images/${Date.now()}_${safeFileName}`;
+    const fileName = `${Date.now()}_${safeFileName}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.MINIO_BUCKET,
