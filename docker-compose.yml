@@ -7,15 +7,17 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - MINIO_ENDPOINT=http://localhost:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=your-secure-user
+      - MINIO_SECRET_KEY=your-secure-password
       - MINIO_BUCKET=images
       - PORT=3001
     volumes:
       - ./uploads:/app/uploads
     networks:
       - minio-network
+    depends_on:
+      - minio
 
 networks:
   minio-network:

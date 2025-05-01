@@ -40,7 +40,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       Key: fileName,
       Body: fs.createReadStream(file.path),
       ContentType: file.mimetype,
-      ACL: "public-read", // Cho phép truy cập công khai
+      ACL: "public-read",
     });
 
     await s3Client.send(command);
