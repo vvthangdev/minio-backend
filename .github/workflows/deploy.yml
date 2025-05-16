@@ -47,7 +47,7 @@ jobs:
           envs: MINIO_ENDPOINT,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,MINIO_BUCKET,REACT_APP_MINIO_API_URL,PORT,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD
           script: |
             # Update code from repository
-            cd ~/backend-minio
+            cd ~/minio-backend
             git pull origin main
 
             # Create network if not exists
