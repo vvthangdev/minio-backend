@@ -49,7 +49,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     fs.unlinkSync(file.path);
 
     // Trả về URL công khai
-    const fileUrl = `http://128.199.246.55:9000/${process.env.MINIO_BUCKET}/${fileName}`;
+    const fileUrl = `https://vuvanthang.website/media/${fileName}`;
     res.json({ fileUrl });
   } catch (error) {
     console.error(error);

@@ -11,6 +11,7 @@ services:
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET=images
+      - REACT_APP_MINIO_API_URL=https://hust-cv-student-20215643.id.vn/minio/upload
       - PORT=3001
     volumes:
       - ./Uploads:/app/uploads
